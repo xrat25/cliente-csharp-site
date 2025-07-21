@@ -86,21 +86,20 @@
             btn.style.pointerEvents = 'none';
 
             try {
-                // Primeiro tenta buscar do repositório privado (se releases forem públicos)
-                let response = await fetch('https://api.github.com/repos/xrat25/cliente-csharp/releases/latest');
-                let data = await response.json();
-                let msiAsset = data.assets?.find(asset => asset.name.endsWith('.msi'));
-
-                if (msiAsset) {
-                    window.location.href = msiAsset.browser_download_url;
-                } else {
-                    // Se não encontrar, tenta buscar do repositório público
-                    window.location.href = 'https://xrat25.github.io/cliente-csharp-site/cliente_csharp.msi';
-                }
+                // Tenta buscar diretamente do repositório público (onde o MSI está hospedado)
+                window.location.href = 'https://xrat25.github.io/cliente-csharp-site/cliente_csharp.msi';
             } catch (error) {
-                // Fallback: tenta buscar do repositório público
+                // Fallback: tenta buscar via API do GitHub (se releases forem públicos)
                 try {
-                    window.location.href = 'https://xrat25.github.io/cliente-csharp-site/cliente_csharp.msi';
+                    const response = await fetch('https://api.github.com/repos/xrat25/cliente-csharp/releases/latest');
+                    const data = await response.json();
+                    const msiAsset = data.assets?.find(asset => asset.name.endsWith('.msi'));
+                    
+                    if (msiAsset) {
+                        window.location.href = msiAsset.browser_download_url;
+                    } else {
+                        throw new Error('MSI não encontrado');
+                    }
                 } catch {
                     alert('Erro ao baixar o arquivo. Tente novamente mais tarde.');
                 }
