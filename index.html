@@ -82,24 +82,33 @@
     <script>
         async function downloadLatest() {
             const btn = document.getElementById('downloadBtn');
-            btn.tex                    Baixando...';
+            btn.textContent = 'Baixando...';
             btn.style.pointerEvents = 'none';
 
             try {
-                const response = await fetch('https://api.github.com/repos/xrat25/cliente-csharp/releases/latest');
-                const data = await response.json();
-                const msiAsset = data.assets.find(asset => asset.name.endsWith('.msi'));
+                // Primeiro tenta buscar do repositório privado (se releases forem públicos)
+                let response = await fetch('https://api.github.com/repos/xrat25/cliente-csharp/releases/latest');
+                let data = await response.json();
+                let msiAsset = data.assets?.find(asset => asset.name.endsWith('.msi'));
 
                 if (msiAsset) {
                     window.location.href = msiAsset.browser_download_url;
                 } else {
-                    throw new Error('Arquivo MSI não encontrado');
+                    // Se não encontrar, tenta buscar do repositório público
+                    window.location.href = 'https://xrat25.github.io/cliente-csharp-site/cliente_csharp.msi';
                 }
             } catch (error) {
-                alert('Erro ao baixar o arquivo. Tente novamente.');
+                // Fallback: tenta buscar do repositório público
+                try {
+                    window.location.href = 'https://xrat25.github.io/cliente-csharp-site/cliente_csharp.msi';
+                } catch {
+                    alert('Erro ao baixar o arquivo. Tente novamente mais tarde.');
+                }
             } finally {
-                btn.textContent = '📥 Baixar';
-                btn.style.pointerEvents = 'auto';
+                setTimeout(() => {
+                    btn.textContent = '📥 Baixar';
+                    btn.style.pointerEvents = 'auto';
+                }, 2000);
             }
         }
 
