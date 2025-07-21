@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cliente_csharp - Download</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .description {
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .version {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .features {
+            text-align: left;
+            margin: 2rem 0;
+        }
+
+        .features h3 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .features ul {
+            list-style: none;
+        }
+
+        .features li {
+            color: #666;
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .features li::before {
+            content: "✓";
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff50;
+            border-top: 2px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .install-instructions {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .install-instructions h4 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .install-instructions code {
+            background: #e9ecef;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .install-instructions ol {
+            margin-left: 1.2rem;
+        }
+
+        .install-instructions li {
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo">xR</div>
+        <h1>cliente_csharp</h1>
+        <p class="description">
+            Sistema cliente desenvolvido pela xRat. Instalação rápida e automática,
+            inicia automaticamente com o Windows.
+        </p>
+
+        <div class="features">
+            <h3>Características:</h3>
+            <ul>
+                <li>Instalação sem necessidade de administrador</li>
+                <li>Inicia automaticamente com o Windows</li>
+                <li>Interface intuitiva e moderna</li>
+                <li>Atualizações automáticas</li>
+                <li>Suporte completo em português</li>
+            </ul>
+        </div>
+
+        <a href="#" id="downloadBtn" class="download-btn" onclick="downloadLatest()">
+            <span class="spinner" id="spinner"></span>
+            <span id="downloadText">📥 Baixar cliente_csharp</span>
+        </a>
+
+        <p class="version" id="versionInfo">Carregando versão...</p>
+
+        <div class="install-instructions">
+            <h4>💡 Instruções de Instalação:</h4>
+            <ol>
+                <li>Baixe o arquivo <code>cliente_csharp.msi</code></li>
+                <li>Se aparecer aviso do Windows, clique em "Mais informações" → "Executar mesmo assim"</li>
+                <li>Ou execute via PowerShell: <code>msiexec /i cliente_csharp.msi /quiet</code></li>
+                <li>O programa será instalado e iniciará automaticamente</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        async function downloadLatest() {
+            const btn = document.getElementById('downloadBtn');
+            const spinner = document.getElementById('spinner');
+            const text = document.getElementById('downloadText');
+
+            spinner.style.display = 'inline-block';
+            text.textContent = 'Baixando...';
+            btn.style.pointerEvents = 'none';
+
+            try {
+                // Busca o release mais recente do repositório
+                const response = await fetch('https://api.github.com/repos/xrat25/cliente-csharp/releases/latest');
+                const data = await response.json();
+
+                const msiAsset = data.assets.find(asset => asset.name.endsWith('.msi'));
+
+                if (msiAsset) {
+                    window.location.href = msiAsset.browser_download_url;
+
+                    setTimeout(() => {
+                        spinner.style.display = 'none';
+                        text.textContent = '📥 Baixar cliente_csharp';
+                        btn.style.pointerEvents = 'auto';
+                    }, 2000);
+                } else {
+                    throw new Error('Arquivo MSI não encontrado');
+                }
+            } catch (error) {
+                console.error('Erro ao baixar:', error);
+                alert('Erro ao baixar o arquivo. Tente novamente.');
+                spinner.style.display = 'none';
+                text.textContent = '📥 Baixar cliente_csharp';
+                btn.style.pointerEvents = 'auto';
+            }
+        }
+
+        // Carrega informações da versão
+        async function loadVersionInfo() {
+            try {
+                const response = await fetch('https://api.github.com/repos/xrat25/cliente-csharp/releases/latest');
+                const data = await response.json();
+
+                document.getElementById('versionInfo').textContent =
+                    `Versão ${data.tag_name} • Atualizado em ${new Date(data.published_at).toLocaleDateString('pt-BR')}`;
+            } catch (error) {
+                document.getElementById('versionInfo').textContent = 'Versão mais recente disponível';
+            }
+        }
+
+        // Carrega as informações ao carregar a página
+        loadVersionInfo();
+    </script>
+</body>
+
+</html>
